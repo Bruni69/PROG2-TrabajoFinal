@@ -53,7 +53,7 @@ public class AppMenu {
 
                         System.out.println("Ingrese número de historia clínica:");
                         String nroHistoria = scanner.nextLine();
-                        System.out.println("Grupo sanguíneo (A_POS, O_NEG, etc.):");
+                        System.out.println("Grupo sanguíneo (A_POS, A_NEG, B_POS, B_NEG, AB_POS, AB_NEG, O_POS, O_NEG):");
                         GrupoSanguineo grupo = GrupoSanguineo.valueOf(scanner.nextLine().toUpperCase());
                         System.out.println("Antecedentes:");
                         String antecedentes = scanner.nextLine();
