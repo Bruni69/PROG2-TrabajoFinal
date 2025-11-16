@@ -108,36 +108,34 @@ public class PacienteDao implements GenericDao<Paciente>{
         }
     }
 
-@Override
-public Paciente getByIdEliminado(int id) throws Exception {
-    String sql = "SELECT * FROM pacientes WHERE ID_Paciente = ?";
+    @Override
+    public Paciente getByIdEliminado(int id) throws Exception {
+        String sql = "SELECT * FROM pacientes WHERE ID_Paciente = ?";
 
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        stmt.setInt(1, id);
-        ResultSet rs = stmt.executeQuery();
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            Paciente p = new Paciente();
-            p.setId(rs.getInt("ID_Paciente"));
-            p.setNombre(rs.getString("nombre"));
-            p.setApellido(rs.getString("apellido"));
-            p.setDni(rs.getString("dni"));
-            p.setFechaNacimiento(rs.getDate("FechaNacimiento").toLocalDate());
-            p.setHistoriaClinica(null);
-            p.setEliminado(rs.getBoolean("eliminado"));
-            return p;
+            if (rs.next()) {
+                Paciente p = new Paciente();
+                p.setId(rs.getInt("ID_Paciente"));
+                p.setNombre(rs.getString("nombre"));
+                p.setApellido(rs.getString("apellido"));
+                p.setDni(rs.getString("dni"));
+                p.setFechaNacimiento(rs.getDate("FechaNacimiento").toLocalDate());
+                p.setHistoriaClinica(null);
+                p.setEliminado(rs.getBoolean("eliminado"));
+                return p;
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener paciente eliminado por ID: " + e.getMessage(), e);
         }
-
-        return null;
-
-    } catch (SQLException e) {
-        throw new Exception("Error al obtener paciente eliminado por ID: " + e.getMessage(), e);
     }
-}
-
-
     
     public Paciente getByDni(String dni) throws Exception {
         String sql = """
@@ -182,8 +180,6 @@ public Paciente getByIdEliminado(int id) throws Exception {
             throw new Exception("Error al obtener paciente por DNI: " + e.getMessage(), e);
         }
     }
-
-
 
     @Override
     public List<Paciente> getAll() throws Exception {

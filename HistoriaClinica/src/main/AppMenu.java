@@ -156,6 +156,7 @@ public void iniciar() {
         Paciente p = pacienteService.getByDni(dni);
 
         if (p != null) {
+            System.out.println("\nPaciente encontrado:");
             System.out.println(p);
             System.out.println(p.getHistoriaClinica());
         } else {
@@ -167,15 +168,33 @@ public void iniciar() {
     private void actualizarPaciente() throws Exception {       
         String dni = validarDni("\nIngrese DNI del paciente a actualizar: ");   
         Paciente p = pacienteService.getByDni(dni);
-            
+        HistoriaClinica hc = historiaService.getByNroHistoria(dni);
+        System.out.println("\nPaciente encontrado:");
+        System.out.println(p);        
+        System.out.println("\n"+ CYAN + "Dejar vacío para no modificar:" + RESET);    
+
         if (p != null) {
-            System.out.print("Nuevo nombre (actual: " + p.getNombre() + ", "+CYAN+"Enter para mantener"+RESET+"): ");
-            String input = scanner.nextLine().trim();
-            if (!input.isEmpty()) p.setNombre(input);
-            System.out.print("Nuevo apellido (actual: " + p.getApellido() + ", "+CYAN+"Enter para mantener"+RESET+"): ");
-            input = scanner.nextLine().trim();
-            if (!input.isEmpty()) p.setApellido(input);
+            System.out.print("Nombre (" + p.getNombre() + "): ");
+            String nombre = scanner.nextLine().trim();
+            if (!nombre.isEmpty()) p.setNombre(nombre);
+
+            System.out.print("Apellido (" + p.getApellido() + "): ");
+            String apellido = scanner.nextLine().trim();
+            if (!apellido.isEmpty()) p.setApellido(apellido);
+
+            System.out.print("DNI (" + p.getDni() + "): ");
+            String dniNuevo = scanner.nextLine().trim();
+            if (!dniNuevo.isEmpty()) {
+                p.setDni(dniNuevo);
+                hc.setNroHistoria(dniNuevo);
+            }            
+
+            System.out.print("Fecha nac (" + p.getFechaNacimiento().format(fmt) + "): ");
+            String fx = scanner.nextLine().trim();
+            if (!fx.isEmpty()) p.setFechaNacimiento(LocalDate.parse(fx, fmt));
+            
             pacienteService.actualizar(p);
+            historiaService.actualizar(hc);
             System.out.println(CYAN+"✅ Paciente actualizado."+RESET);
         } else {
             System.out.println(RED+"⚠ Paciente no encontrado."+RESET);
@@ -236,6 +255,7 @@ public void iniciar() {
 
     // 7. LISTAR HISTORIAS CLÍNICAS
     private void listarHistorias()throws Exception {
+        System.out.println("\n--- Lista de Historias Clinicas ---");
         List<HistoriaClinica> historias = historiaService.getAll();
         historias.forEach(System.out::println);
     }
@@ -249,6 +269,9 @@ public void iniciar() {
             System.out.println(RED + "⚠ Historia no encontrada." + RESET);
             return;
         }
+        System.out.println("\nHistoria clinica encontrada:");
+        System.out.println(hc);         
+        /* System.out.println("\n"); */
 
                     System.out.println("""
                     Grupo sanguíneo (número): \n
@@ -264,6 +287,7 @@ public void iniciar() {
                     """);
 
             GrupoSanguineo grupo = validarGrupoSanguineo("Código (0-8): ");
+            hc.setGrupoSanguineo(grupo);
 
         System.out.print("Nuevo antecedente: ");
         hc.setAntecedentes(scanner.nextLine());
@@ -275,6 +299,7 @@ public void iniciar() {
         hc.setObservaciones(scanner.nextLine());
 
         historiaService.actualizar(hc);
+
         System.out.println(GREEN + "✔ Historia actualizada." + RESET);
     }
 
