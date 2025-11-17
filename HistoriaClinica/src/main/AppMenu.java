@@ -9,6 +9,7 @@ import java.util.Scanner;
 import modelo.GrupoSanguineo;
 import modelo.HistoriaClinica;
 import modelo.Paciente;
+import servicio.PacienteService;
 
 public class AppMenu {
 
@@ -20,7 +21,7 @@ public class AppMenu {
     public static final String YELLOW = "\u001B[33m";
 
     private final Scanner scanner = new Scanner(System.in);
-    private final PacienteDao pacienteService = new PacienteDao();
+    private final PacienteService pacienteService = new PacienteService();
     private final HistoriaClinicaDao historiaService = new HistoriaClinicaDao();
     private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -137,7 +138,6 @@ public void iniciar() {
             );
 
             historiaService.insertar(hc);
-            pacienteService.insertar(paciente);
 
             System.out.println(GREEN + "✔ Paciente creado exitosamente." + RESET);
         

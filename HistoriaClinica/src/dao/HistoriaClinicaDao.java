@@ -31,6 +31,26 @@ public class HistoriaClinicaDao implements GenericDao<HistoriaClinica>{
             throw new RuntimeException("Error en transacción al insertar historia clínica: " + e.getMessage(), e);
         }
     }
+    public void insertar(HistoriaClinica entidad, Connection conn) throws Exception {
+        String sql = "INSERT INTO HistoriaClinica (NroHistoria, GrupoSanguineo, Antecedentes, MedicacionActual, Observaciones, eliminado) VALUES (?, ?, ?, ?, ?, false)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, entidad.getNroHistoria());
+            stmt.setInt(2, entidad.getGrupoSanguineo().getCodigo());
+            stmt.setString(3, entidad.getAntecedentes());
+            stmt.setString(4, entidad.getMedicacionActual());
+            stmt.setString(5, entidad.getObservaciones());
+
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) entidad.setId(rs.getInt(1));
+
+        } catch (SQLException e) {
+            // ⚠️ No cierro la conexión, porque la maneja el Service
+            throw new Exception("Error al insertar historia clínica en transacción: " + e.getMessage(), e);
+        }
+    }
 
     @Override
     public void actualizar(HistoriaClinica entidad) throws Exception {

@@ -34,6 +34,22 @@ public class PacienteDao implements GenericDao<Paciente>{
         }
 
     }
+    public void insertar(Paciente entidad, Connection conn) throws Exception {
+        String sql = "INSERT INTO pacientes (nombre, apellido, dni, FechaNacimiento, ID_HistoriaClinica, eliminado) VALUES (?, ?, ?, ?, ?, false)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, entidad.getNombre());
+            stmt.setString(2, entidad.getApellido());
+            stmt.setString(3, entidad.getDni());
+            stmt.setDate(4, Date.valueOf(entidad.getFechaNacimiento()));
+            stmt.setInt(5, entidad.getHistoriaClinica().getId());
+
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) entidad.setId(rs.getInt(1));
+        }catch (SQLException e) {
+            throw new RuntimeException("Error en transacción al insertar paciente: " + e.getMessage(), e);
+        }
+    }
 
     @Override
     public void actualizar(Paciente entidad) throws Exception {
